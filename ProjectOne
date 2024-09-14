@@ -1,24 +1,25 @@
 import numpy as np
+import json
+
+resistances = json.loads(''')
+voltages = json.loads(''')
 
 A = np.zeros(25,25)
-b = np.zeros(25,1)
+b = np.zeros(25)
 
-def change_index(row, col):
-    return (row*5) + col
+b[0] = 10.0
+b[24] = 0.0
 
-for i in range(0,5):
-    for j in range(0,5):
-        index = change_index(i,j)
-        A[index,index] = 4
+for resistance in resistances:
+    n1 = resistance['node1'] - 1  # Convert to zero index
+    n2 = resistance['node2'] - 1  # Convert to zero index
+    r = resistance['resistance']
+    A[n1][n1] += 1 / r
+    A[n1][n2] -= 1 / r
+    A[n2][n2] += 1 / r
+    A[n2][n1] -= 1 / r
 
-        if i>0:
-            A[index, change_index(i-1, j)] = -1
-        if i<4:
-            A[index, change_index(i+1, j)] = -1
-        if j>0:
-            A[index, change_index(i, j-1)] = -1
-        if j>4:
-            A[index, change_index(i, j+1)] = -1
-
-        
-
+print("Matrix A:")
+print(A)
+print("\nVector b:")
+print(b)
