@@ -1,0 +1,6 @@
+import numpy as np
+
+A = np.zeros(25,25)
+b = np.zeros(25,1)
+
+int 
