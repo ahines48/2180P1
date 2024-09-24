@@ -1,4 +1,4 @@
-****The node voltages and the tree network node voltages do not have node 1 = 10V and node 25 = 0V****
+#****The node voltages and the tree network node voltages do not have node 1 = 10V and node 25 = 0V****
 
 import numpy as np
 import json
@@ -17,6 +17,7 @@ def readDataFiles():
 
     with open(node_voltages_path, 'r') as file:
         node_voltages = json.load(file)
+
 
     # node_resistances = [[entry['node1'], entry['node2'], entry['resistance']] for entry in node_resistances]
     # node_voltages = [[entry['node'], entry['voltage']] for entry in node_voltages]
@@ -71,9 +72,6 @@ b = np.zeros(25)
 b[0] = 10.0
 b[24] = 0.0
 
-A[0,0] = 1
-A[24,24] = 1
-
 
 for resistance in resistances:
     n1 = resistance['node1'] - 1  # Convert to zero index
@@ -84,13 +82,20 @@ for resistance in resistances:
     A[n2][n2] += 1 / r
     A[n2][n1] -= 1 / r
 
+
+
+A[0, 1:] = 0 
+A[0,0] = 1
+A[24, :-1] = 0
+A[24,24] = 1
+
 print("Matrix A:")
 print(A)
 print("\nVector b:")
 print(b)
 
-
-
+#testAnswer = np.linalg.solve(A, b)
+#print("Test Answer: ", testAnswer)
 
 # Test arrays for LU decomp stuff should be -.5, 5, -7
 # A= np.array([[2, 1, 1],
@@ -139,11 +144,6 @@ def treeNetwork():
     A_tree = np.zeros((n,n))
     b_tree = np.zeros(n)
 
-    b_tree[0] = 10.0
-    b_tree[24] = 0.0
-
-    A_tree[0, 0] = 1
-    A_tree[24, 24] = 1
 
     for voltage in voltages:
         node_number = voltage['node'] - 1
@@ -159,6 +159,14 @@ def treeNetwork():
         A_tree[n1][n2] -= 1 / r
         A_tree[n2][n2] += 1 / r
         A_tree[n2][n1] -= 1 / r
+
+    b_tree[0] = 10.0
+    b_tree[24] = 0.0
+
+    A_tree[0, 0] = 1
+    A_tree[0, 1:] = 0 
+    A_tree[24, 24] = 1
+    A_tree[24, :-1] = 0
 
     L_tree, U_tree = LU_Decomp(A_tree)
     y_tree = solve_Y(L_tree, b_tree)
