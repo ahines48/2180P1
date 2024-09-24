@@ -171,4 +171,28 @@ def treeNetwork():
     print("Tree Node Voltages: ")
     print(Voltages_tree)
 
+    currents_tree = []
+    for resistance in resistances:
+        n1 = resistance['node1'] - 1
+        n2 = resistance['node2'] - 1
+        r = resistance['resistance']
+        current = (Voltages_tree[n1] - Voltages_tree[n2]) / r
+        currents_tree.append({
+            "node1": n1 + 1,
+            "node2": n2 + 1,
+            "current": current
+    })
+
+    print("\nTree Network Currents: ")
+    for current in currents_tree:
+        node1 = current['node1']
+        node2 = current['node2']
+        current_value = current['current']
+        print(f"Nodes {node1} to {node2}: {current_value:.4f} A")
+
+    currents_tree_array = np.array([(current['node1'], current['node2'], current['current']) for current in currents_tree])
+    np.savetxt('tree_currents.csv', currents_tree_array, delimiter=',', fmt=['%d', '%d', '%.4f'], header='node1,node2,current', comments='')
+
+
 treeNetwork()
+
