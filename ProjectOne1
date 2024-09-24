@@ -1,3 +1,5 @@
+****The node voltages and the tree network node voltages do not have node 1 = 10V and node 25 = 0V****
+
 import numpy as np
 import json
 import os
